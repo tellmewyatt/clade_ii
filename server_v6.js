@@ -234,6 +234,7 @@ function generateSequence(){
 		}
 		function eachGoal(g, p, inter, probChange = [0.05, 0.15]){
 			var seq = [];
+			var rTime = null;
 			// Probability that the part will change notes at any given time, start, and end
 			var currentProbChange = probChange[0];
 			// IF previous goal is note and next goal is note
@@ -266,7 +267,7 @@ function generateSequence(){
 				}
 			}
 			if(g.prevNote != "r" && g.note == "r"){
-				var rTime = Math.round(Math.random()*g.interval);
+				rTime = Math.round(Math.random()*g.interval);
 				var prevNote = g.prevNote;
 				currentProbChange+=(probChange[1]-probChange[0])/g.interval;
 				for(var i =0; i < rTime; i++){
@@ -284,7 +285,7 @@ function generateSequence(){
 			for(var h = 0; h < g.hold; h++){
 				seq.push(g.note);
 			}
-			return seq;
+			return [seq, rTime];
 		}
 		function generateRandomPitch(p,cnote, interval){
 			var total = interval*2;
@@ -302,8 +303,12 @@ function generateSequence(){
 			}
 			for(var g = 1; g < Parts[p].goalNotes.length; g++){
 				var seq = eachGoal(Parts[p].goalNotes[g],Parts[p], diffInterval[g-1]);
-				for(var i = 0; i <seq.length; i++){
-					Parts[p].sequence.push(seq[i]);
+				for(var i = 0; i <seq[0].length; i++){
+					Parts[p].sequence.push(seq[0][i]);
+				}
+				if(seq[1] != null){
+					Parts[p].goalNotes[g].restTime = seq[1]+Parts[p].goalNotes[g].time-Parts[p].goalNotes[g].interval; 
+					console.log("RESTTIME:", Parts[p].goalNotes[g].restTime);
 				}
 			}
 			console.log(Parts[p].sequence.length);
@@ -397,40 +402,52 @@ function exportShorterDurations(){
 	});
 }
 function changeRhythms(){
-	for(var p =0; p< Parts.length; p++){
-		var entryTimes =[];
-		for(var g=0; g<Parts[p].goalNotes.length; g++){
+	
+	for(var p = 0; p< Parts.length; p++){
+		// determines the start and end times
+		var startTimes = [];
+		var endTimes = [];
+		for(var g = 0; g<Parts[p].goalNotes.length; g++) {
 			if(Parts[p].goalNotes[g].entryTime != null){
-				entryTimes.push(Parts[p].goalNotes[g].entryTime);
+				startTimes.push(Parts[p].goalNotes[g].entryTime);
+			}
+			if(g == 0 && Parts[p].goalNotes[g].note != 'r'){
+				startTimes.push(0);
+			}
+			if(Parts[p].goalNotes[g].restTime != null){
+				endTimes.push(Parts[p].goalNotes[g].restTime);
+			}
+			if(g == Parts[p].goalNotes.length-1 && Parts[p].goalNotes[g].note != 'r'){
+				endTimes.push(totalTime);
 			}
 		}
-		for(var r = 0; r<Parts[p].rhythmsa.length; r++){
-			for(var e = 0; e < entryTimes.length; e++){
-				if(Parts[p].rhythmsa[r].interval[0] <= entryTimes[e] && Parts[p].rhythmsa[r].interval[1] > entryTimes[e]){
-					Parts[p].rhythms.push(new rhythmStruct(Parts[p].rhythmsa[r].units, Parts[p].rhythmsa[r].totalTime, [entryTimes[e], Parts[p].rhythmsa[r].interval[1]]));
-					if(r>0){
-						Parts[p].rhythms[r-1].interval[1] = entryTimes[e];
-						Parts[p].rhythms[r-1].setTimes();
+		console.log(Parts[p].name, startTimes.length, endTimes.length);
+		//adjusts the rhythms accordingly
+		var rhy = 0;
+		var rhys = [];
+		for(var i = 0; i < startTimes.length; i++){
+			var time = startTimes[i];
+			while(time < endTimes[i]){
+				for(var r = 0; r < Parts[p].rhythmsa.length; r++){
+					if(time < Parts[p].rhythmsa[r].interval[1]){
+						var struct = Parts[p].rhythmsa[r];
+						if(Parts[p].rhythmsa[r].interval[1] < endTimes[i]){
+							rhys.push(new rhythmStruct(struct.units, struct.totalTime, [time, struct.interval[1]]));
+						}else{
+							rhys.push(new rhythmStruct(struct.units, struct.totalTime, [time, endTimes[i]]));
+						}
+						time = Parts[p].rhythmsa[r].interval[1];
+						break;
 					}
-				}else{
-					Parts[p].rhythms.push(new rhythmStruct(Parts[p].rhythmsa[r].units, Parts[p].rhythmsa[r].totalTime, [Parts[p].rhythmsa[r].interval[0], Parts[p].rhythmsa[r].interval[1]]));
 				}
-				Parts[p].rhythms[r].setTimes();
-				break;
 			}
 		}
-		var r = 0;
-		var exit = false;
-		do{
-			console.log(Parts[p].name, Parts[p].rhythms[r].interval[0],Parts[p].sequence[Parts[p].rhythms[r].interval[0]]);
-			if(Parts[p].sequence[Parts[p].rhythms[r].interval[0]] == "r"){
-				Parts[p].rhythms.splice(r, 1);
-				console.log("SPLICED");
-			}else{
-				r++;
-			}
-		}while(r<Parts[p].rhythms.length);
+		for(var i =0; i<rhys.length; i++){
+			rhys[i].setTimes();
+		}
+		Parts[p].rhythms = rhys;
 	}
+	
 }
 function drawSVG(){
 	var scalefact = 5;
@@ -572,7 +589,7 @@ class goalNote{
 		this.counter=0;
 		this.timer=0;
 		this.currentMaxProb = this.maxVal;
-		this.restTime = this.time;
+		this.restTime = null;
 		this.entryTime = null;
 		this.replaceIt = false;
 		this.noteprobchange = 1/300;
