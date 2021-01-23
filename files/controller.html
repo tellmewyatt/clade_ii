@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Clade II - Wyatt Cannon</title>
+		<style>
+		</style>
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<script src="https://cdn.jsdelivr.net/npm/webmidi"></script>
+	<script src="/socket.io/socket.io.js"></script>
+	<script src="/timesync/timesync.js"></script> 
+	<script src="controller.js"></script> 
+	<style>
+		@font-face{
+			font-family: 'feta26';
+			src: url(feta26-new.ttf);
+		}
+		@font-face{
+			font-family: 'Clefs';
+			src: url(newclefs.ttf);
+		}
+		</style>
+	</head>
+	<body style='margin:0px; padding:0px; overflow:hidden;' onload='loadDoc(); setValues1(); '>
+		<script>
+		var socket = io();
+					// create a timesync instance
+		var ts = timesync.create({
+			server: '/timesync',
+			interval: 1000
+		});
+		 
+		// get notified on changes in the offset
+		/*ts.on('change', function (offset) {
+			console.log('changed offset: ' + offset + ' ms');
+		});*/
+		 
+		// get synchronized time
+		setInterval(function () {
+			var now = new Date(ts.now());
+			//console.log('now: ' + now.toISOString() + ' ms');
+		}, 1000);
+		</script>
+		<canvas id="canvas1" width='1024' height='256' onclick='setTime(event)'></canvas>
+		<div style='position:absolute; top:10%;'>
+			Performance will start 2<input type='range' id='start1' list='tickmarks' max="10" min="2" value='2'/>10 seconds from now.
+			<datalist id="tickmarks">
+				<option value="2"></option>
+				<option value="3"></option>
+				<option value="4"></option>
+				<option value="5"></option>
+				<option value="6"></option>
+				<option value="7"></option>
+				<option value="8"></option>
+				<option value="9"></option>
+				<option value="10"></option>
+			</datalist>
+			<button onclick='
+			var d = new Date(); 
+			var n = d.getTime(); 
+			socket.emit("message", "strtstp," + (n+parseInt(document.getElementById("start1").value)*1000).toString()); 
+			countDownVal = parseInt(document.getElementById("start1").value);
+			console.log((n+parseInt(document.getElementById("start1").value)*1000).toString(), ", ", n, parseInt(document.getElementById("start1").value)*1000)
+			incrementTime();
+			playCounter = setInterval(incrementTime, 1000);
+			'>START!!!</button>
+			<br/>
+			<button onclick='socket.emit("message", "strtstp," + "-1"); clearInterval(playCounter); document.getElementById("countDown").innerHTML = "STOPPED"'>STOP PERFORMANCE</button>
+			<div id='countDown'></div>
+		</div>
+	</body>
+</html>
