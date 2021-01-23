@@ -537,6 +537,7 @@ class rhythmStruct{
 		this.totalTime = totalTime;
 		this.interval = interval;
 		this.times = [];
+		this.endUnits = [];
 	}
 	setTimes(){
 		this.times = [];
@@ -545,6 +546,34 @@ class rhythmStruct{
 			this.times.push(t);
 			t+=this.totalTime;
 		}
+		this.calcEndUnits(this.times[this.times.length-1], this.interval[1]);
+	}
+	calcEndUnits(lastTime, totalTime){
+		this.endUnits = [];
+		var timeDiff = totalTime-lastTime;
+		for(var i =0; i < this.units.length; i++){
+			if(this.units[i].time < timeDiff){
+				if(this.units[i].duration+this.units[i].time <= timeDiff){
+					this.endUnits.push(this.units[i]);
+				}else{
+					var dur = timeDiff-this.units[i].time;
+					var t = this.units[i].time;
+					var newTimes = [];
+					var newEnvs = this.units[i].env;
+					for(var x = 0; x < this.units[i].envt.length; x++){
+						if(this.units[i].envt[x] < timeDiff){
+							newTimes.push(this.units[i].envt[x]);
+						}else{
+							newTimes.push(timeDiff);
+						}
+					}
+					this.endUnits.push(new rhyUnit(dur, t, newEnvs, newTimes));
+					
+				}
+				
+			}
+		}
+		console.log(this.endUnits);
 	}
 }
 function randRhythmGen(ttime = Math.round(Math.random()*10+5), rnum = 5, interval=[0,1000]){
