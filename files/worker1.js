@@ -111,11 +111,11 @@ class Part{
 	}
 	appendEnvs(time = 0){
 		if(!this.appendedEnvs){
+			this.currentEnvs = [];
+			this.currentEnvTs = [];
 			if(time != 0){
 				var possibleEnvs = [];
 				var possEnvsI = [];
-				this.currentEnvs = [];
-				this.currentEnvTs = [];
 				for(var r =0; r < this.rhythms.length; r++){
 					if(time >= this.rhythms[r].interval[0]
 					&& time < this.rhythms[r].interval[1]){
@@ -133,13 +133,13 @@ class Part{
 						&& time < this.rhythms[r].interval[0]){
 							possibleEnvs.push(this.rhythms[r]);
 							possEnvsI.push(r);
-							console.log(this.name, this.rhythms, time);
+							//console.log(this.name, this.rhythms, time);
 							break;
 						}
 					}
 				}
 				for(var i =0; i< possibleEnvs.length; i++){
-					console.log(this.name, possibleEnvs[i]);
+					//console.log(this.name, possibleEnvs[i]);
 					this.pushEnvs(possibleEnvs[i],possEnvsI[i], time);
 					/*for(var x = 0; x< possibleEnvs[i].times.length; x++){
 						this.currentEnvs.push(possEnvsI[i]);
@@ -152,7 +152,7 @@ class Part{
 				var possEnvsI = [];
 				possEnvsI.push(0);
 				for(var i =0; i< possibleEnvs.length; i++){
-					console.log(this.name, possibleEnvs[i]);
+					//console.log(this.name, possibleEnvs[i]);
 					this.pushEnvs(possibleEnvs[i],possEnvsI[i], time);
 					/*for(var x = 0; x< possibleEnvs[i].times.length; x++){
 						this.currentEnvs.push(possEnvsI[i]);

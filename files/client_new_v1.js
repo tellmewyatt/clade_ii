@@ -56,6 +56,7 @@ var wWorker = new Worker('worker1.js');
 var workerReturn;
 var setT = false;
 wWorker.onmessage = function(e){
+	workerReturn = [];
 	workerReturn = e.data;
 	if(setT){
 		setNotes();
@@ -69,10 +70,11 @@ document.addEventListener('keydown', function(event) {
     console.log(event.keyCode);
 	if(event.keyCode==13){
 		socket.emit('message', "strtstp,"+ts.now().toString());
-		play = true;
+		//play = true;
 	}
 	if(event.keyCode==27){
-		play = false;
+		//play = false;
+		socket.emit('message', "strtstp,stop");
 	}
 });
 // FOR CLEFS: q = treble, l = bass, n = alto 
@@ -447,6 +449,11 @@ class Part{
 		ctx.moveTo(line2x, linesy1);
 		ctx.lineTo(line2x, linesy2);
 		ctx.stroke();
+		ctx.strokeStyle='#ffcece';
+		ctx.beginPath();
+		ctx.moveTo(this.staffx+this.currentNoteX, linesy1);
+		ctx.lineTo(this.staffx+this.currentNoteX, linesy2);
+		ctx.stroke();
 	}
 	drawRest(xPosi=300){
 		var xPos = xPosi+this.staffx;
@@ -458,6 +465,7 @@ class Part{
 		for(var i = 0; i < this.nextNoteTimes.length; i++){
 			this.nextNoteTimes[i] = this.nextNoteTimes[i]-diff;
 		}
+		this.currentEnvs = [];
 		this.currentNote = workerReturn[0][this.idNum];
 		this.currentEnvs = workerReturn[3][this.idNum];
 		this.currentEnvTs = workerReturn[4][this.idNum];
@@ -571,8 +579,13 @@ function createSocketIO(){
 		var msgspl = msg.split(",");
 		if(msgspl[0] == 'strtstp'){
 			console.log(msgspl[1]);
-			var timeInt = parseInt(msgspl[1]);
-			startPiece(timeInt+5000);
+			if(msgspl[1] != "stop"){
+				var timeInt = parseInt(msgspl[1]);
+				play = true;
+				startPiece(timeInt+5000);
+			}else{
+				play = false;
+			}
 		}else{
 			CompClock = parseInt(msgspl[1]);
 			setT = true;
