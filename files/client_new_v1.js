@@ -79,6 +79,17 @@ document.addEventListener('keydown', function(event) {
 });
 // FOR CLEFS: q = treble, l = bass, n = alto 
 // Load Canvas and Context
+function setUpMIDI(){
+	WebMidi.enable(function (err) {
+		if (err) {
+			console.log("WebMidi could not be enabled.", err);
+		} else {
+			console.log("WebMidi enabled!");
+			midiOut = WebMidi.outputs[0];
+			console.log("Recording on Output:", WebMidi.outputs[0]);
+		}
+	});
+}
 function setValues1(width,height){
 	var am = 0;
 	canvas = document.getElementById("canvas1");
@@ -102,6 +113,7 @@ function setValues1(width,height){
 	ledgerLineThickness = staffLineSpacing;
 	accidentalspace = staffLineSpacing*2;
 	loadDoc();
+	setUpMIDI();
 }
 function setPartPositions(){
 	var am = 0;
@@ -472,6 +484,7 @@ class Part{
 		for(var i = 0; i < this.currentEnvTs.length; i++){
 			this.currentEnvTs[i] = this.currentEnvTs[i]-diff;
 		}
+		this.writeMIDI();
 	}
 	checkClefs(){
 		if(this.clef == "q" && this.altClef){
@@ -524,6 +537,80 @@ class Part{
 			if(this.sequence[CompClock+7] > 24 && this.octvb){
 				this.changeClefText = "cancel 8vb in 2";
 				this.changeClefY = staffLineSpacing*2;
+			}
+		}
+	}
+	findDurs(unit){
+		var breaks =[0];
+		// rets returns a multidimensional array that contains the time and duration of each note
+		var rets = [];
+		for(var s = 1; s < unit.duration; s++){
+			if(this.sequence[CompClock+s+Math.floor(unit.time)] != this.sequence[CompClock+s-1+Math.floor(unit.time)]){
+				breaks.push(s);
+			}
+		}
+		breaks.push(unit.duration);
+		for(var b =1; b<breaks.length; b++){
+			rets.push([
+				breaks[b-1]+unit.time, 
+				breaks[b]-breaks[b-1],
+				this.sequence[CompClock+Math.floor(unit.time)+breaks[b-1]]
+			]);
+		}
+		return rets;
+	}
+	writeMIDI(){
+		if(Math.round(this.currentEnvTs[1]) == 0){
+			for(var u =0; u < this.rhythms[this.currentEnvs[1][0]].units.length; u++){
+				var unit = this.rhythms[this.currentEnvs[1][0]].units[u];
+				midiOut.sendControlChange(7,
+					Math.round(unit.env[0]*127), 
+					this.idNum+1,
+					{
+						time: WebMidi.time+unit.time*1000
+					}
+				);
+				if(unit.duration < 1){
+					console.log(this.name, "Playing:", this.sequence[CompClock+Math.floor(unit.time)], "for", unit.duration, 'seconds at', unit.time, CompClock+unit.time);
+					if(this.sequence[CompClock+Math.floor(unit.time)] != "r"){
+						midiOut.playNote(this.sequence[CompClock+Math.floor(unit.time)], this.idNum+1, {
+							duration:unit.duration*1000-50,
+							time: WebMidi.time+unit.time*1000}
+						);
+					}
+				} else {
+					var td = this.findDurs(unit);
+					for(var t = 0; t<td.length; t++){
+						console.log(this.name, "Playing:", td[t][2], "for", td[t][1], 'seconds at', td[t][0], CompClock+td[t][0]);
+						if(typeof(td[t][2]) == "number"){
+							midiOut.playNote(td[t][2], this.idNum+1, {
+								duration:td[t][1]*1000-50,
+								time: WebMidi.time+td[t][0]*1000}
+							);
+						}
+					}
+				}
+				createMIDIramp(unit, this.idNum, this.name);
+			}
+		}
+	}
+}
+function createMIDIramp(unit, idNum, name){
+	for(var e = 1; e < unit.envt.length; e++){
+		if(unit.envt[e] != unit.envt[e-1] && unit.env[e] != unit.env[e-1]){
+			for(var i = 0; i < 32; i++){
+				var x = Math.round(calcPointFromX(
+						(i/32)*(unit.envt[e]-unit.envt[e-1])+unit.envt[e-1], 
+						unit.envt[e-1],
+						unit.env[e-1], 
+						unit.envt[e],unit.env[e])*127);
+				midiOut.sendControlChange(7,
+					x, 
+					idNum+1,
+					{
+						time: WebMidi.time+(unit.time+(i/32)*(unit.envt[e]-unit.envt[e-1])+unit.envt[e-1])*1000
+					}
+				);
 			}
 		}
 	}
@@ -643,7 +730,7 @@ function doFrame(time){
 				Parts[p].drawPart();
 			}
 		}
-		if(change && CompClock < totalTime-1){
+		if(change && CompClock < totalTime){
 			CompClock++;
 			wWorker.postMessage([CompClock+1, false]);
 		}
