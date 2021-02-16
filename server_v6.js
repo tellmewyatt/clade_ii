@@ -5,6 +5,7 @@ var fs = require("fs");
 var io = require('socket.io')(http);
 var timesyncServer = require('timesync/server');
 var xml2js = require('xml2js');
+var MidiWriter = require('midi-writer-js');
 var totalTime = 1192;
 var CompClock = 0;
 var Parts = [];
@@ -651,11 +652,11 @@ class goalNote{
 Parts.push(new Part("Fl.", 60, 96, "r", 0.05, "q", 0, 0));
 Parts.push(new Part("Ob.", 58, 103, "r", 0.05, "q", 0, 1));
 Parts.push(new Part("A. Sax", 60, 88, "r", 0.05, "q", -9, 2));
-Parts.push(new Part("Bsn.", 46, 76, "r", 0.05, "l", 0, 3, true));
+Parts.push(new Part("Bsn.", 46, 67, "r", 0.05, "l", 0, 3, true));
 Parts.push(new Part("B. Cl.", 52, 84, "r", 0.05, "q", -14, 4));
-Parts.push(new Part("Hn.", 42, 84, "r", 0.05, "q", -7, 5, true));
-Parts.push(new Part("Tpt.", 54, 86, "r", 0.05, "q", -2, 6));
-Parts.push(new Part("Tbn.", 40, 70, "r", 0.05, "l", 0, 7, true));
+Parts.push(new Part("Hn.", 42, 79, "r", 0.05, "q", -7, 5, true));
+Parts.push(new Part("Tpt.", 54, 82, "r", 0.05, "q", -2, 6));
+Parts.push(new Part("Tbn.", 40, 66, "r", 0.05, "l", 0, 7, true));
 Parts.push(new Part("Pno.", 60, 127, "r", 0.05, "q", 0, 8, true));
 Parts.push(new Part("Pno.", 12, 60, "r", 0.05, "l", 0, 9, true));
 Parts.push(new Part("Vln. I", 55, 100, 72, 0.05, "q", 0, 10));
@@ -673,18 +674,18 @@ Parts[0].rhythmsa = [
 	],6, [0, 101]),
 	new rhythmStruct([
 		new rhyUnit(4.5, 0, [0, 1, 1, 0], [0, 2, 3, 4.5]), 
-	],5, [101, 118]),
+	],5, [101, 121]),
 	new rhythmStruct([
 		new rhyUnit(2.5, 0, [0, 1, 1, 0], [0, 0.5, 1, 2.5]), 
 		new rhyUnit(1.5, 2.5, [0, 1, 1, 0], [0, 0.5, 1, 1.5]), 
-	],5, [118, 136]),
+	],5, [121, 136]),
 	new rhythmStruct([
 		new rhyUnit(0.1, 0.5, [1, 1, 0], [0, 0.1, 0.1]), 
 		new rhyUnit(0.1, 0.625, [1, 1, 0], [0, 0.1, 0.1]), 
 		new rhyUnit(0.1, 0.75, [1, 1, 0], [0, 0.1, 0.1]), 
 		new rhyUnit(0.1, 0.875, [1, 1, 0], [0, 0.1, 0.1]), 
 		new rhyUnit(2, 1, [1, 1, 0], [0, 0.5, 2])
-	],3, [136, 174]),
+	],3, [136, 172]),
 	new rhythmStruct(
 		randomlyPlaceStruct(
 			[new rhyUnit(0.1, 0, [1, 1, 0], [0, 0.1, 0.1]), 
@@ -693,7 +694,7 @@ Parts[0].rhythmsa = [
 			new rhyUnit(0.1, 0.375, [1, 1, 0], [0, 0.1, 0.1]), 
 			new rhyUnit(1, 0.5, [1, 1, 0], [0, 0.5, 1])],
 			20, 8, 1.5
-		), 22, [174, 188]
+		), 22, [172, 194]
 	),
 	new rhythmStruct(
 		randomlyPlaceStruct(
@@ -703,7 +704,7 @@ Parts[0].rhythmsa = [
 			new rhyUnit(0.1, 0.375, [1, 1, 0], [0, 0.1, 0.1]), 
 			],
 			20, 25, 0.5
-		), 20, [188, 202]
+		), 20, [194, 214]
 	),
 	new rhythmStruct(
 		randomlyPlaceStruct(
@@ -713,7 +714,7 @@ Parts[0].rhythmsa = [
 			new rhyUnit(0.1, 0.375, [1, 1, 0], [0, 0.1, 0.1]), 
 			new rhyUnit(1, 0.5, [1, 1, 0], [0, 0.5, 1])],
 			20, 12, 1.5
-		), 22, [202, 490]
+		), 22, [214, 478]
 	),
 	new rhythmStruct([
 		new rhyUnit(0.1, 0, [1,1,0], [0,.1,.1]),
@@ -740,15 +741,15 @@ Parts[0].rhythmsa = [
 		new rhyUnit(0.1, Math.round(Math.random()*25)/5+5, [1,1,0], [0,.1,.1]),
 		new rhyUnit(0.1, Math.round(Math.random()*25)/5+5, [1,1,0], [0,.1,.1]),
 		new rhyUnit(0.5, Math.round(Math.random()*25)/5+5, [0,1,0], [0,.5,.5]),
-	], 10, [490, 524]),
+	], 10, [478, 528]),
 	new rhythmStruct(
 		randomlyPlaceStruct(
 			[new rhyUnit(0.1, 0, [1, 1, 0], [0, 0.1, 0.1]), 
-			new rhyUnit(0.1, .125, [1, 1, 0], [0, 0.1, 0.1]), 
-			new rhyUnit(0.1, 0.25, [1, 1, 0], [0, 0.1, 0.1]), 
-			new rhyUnit(0.1, 0.375, [1, 1, 0], [0, 0.1, 0.1])], 
-			20, 12, 0.5
-		), 22, [524, 588]
+			new rhyUnit(0.3, .125, [1, 1, 0], [0, 0.3, 0.3]), 
+			new rhyUnit(0.1, .45, [1, 1, 0], [0, 0.1, 0.1]), 
+			],
+			22, 17, 0.6
+		), 22, [528, 588]
 	),
 	new rhythmStruct([
 		new rhyUnit(16, 0, [1, 1, 0], [0, 6, 16])
@@ -780,18 +781,18 @@ Parts[1].rhythmsa = [
 	],6, [0, 101]),
 	new rhythmStruct([
 		new rhyUnit(4.5, 0, [0, 1, 1, 0], [0, 2, 3, 4.5]), 
-	],5, [101, 118]),
+	],5, [101, 121]),
 	new rhythmStruct([
 		new rhyUnit(2.5, 0, [0, 1, 1, 0], [0, 0.5, 1, 2.5]), 
 		new rhyUnit(1.5, 2.5, [0, 1, 1, 0], [0, 0.5, 1, 1.5]), 
-	],5, [118, 136]),
+	],5, [121, 136]),
 	new rhythmStruct([
 		new rhyUnit(0.1, 0.5, [1, 1, 0], [0, 0.1, 0.1]), 
 		new rhyUnit(0.1, 0.625, [1, 1, 0], [0, 0.1, 0.1]), 
 		new rhyUnit(0.1, 0.75, [1, 1, 0], [0, 0.1, 0.1]), 
 		new rhyUnit(0.1, 0.875, [1, 1, 0], [0, 0.1, 0.1]), 
 		new rhyUnit(2, 1, [1, 1, 0], [0, 0.5, 2])
-	],3, [136, 174]),
+	],3, [136, 173]),
 	new rhythmStruct(
 		randomlyPlaceStruct(
 			[new rhyUnit(0.1, 0, [1, 1, 0], [0, 0.1, 0.1]), 
@@ -800,7 +801,7 @@ Parts[1].rhythmsa = [
 			new rhyUnit(0.1, 0.375, [1, 1, 0], [0, 0.1, 0.1]), 
 			new rhyUnit(1, 0.5, [1, 1, 0], [0, 0.5, 1])],
 			20, 8, 1.5
-		), 22, [174, 188]
+		), 22, [173, 195]
 	),
 	new rhythmStruct(
 		randomlyPlaceStruct(
@@ -810,7 +811,7 @@ Parts[1].rhythmsa = [
 			new rhyUnit(0.1, 0.375, [1, 1, 0], [0, 0.1, 0.1]), 
 			],
 			20, 25, 0.5
-		), 20, [188, 202]
+		), 20, [195, 215]
 	),
 	new rhythmStruct(
 		randomlyPlaceStruct(
@@ -820,7 +821,7 @@ Parts[1].rhythmsa = [
 			new rhyUnit(0.1, 0.375, [1, 1, 0], [0, 0.1, 0.1]), 
 			new rhyUnit(1, 0.5, [1, 1, 0], [0, 0.5, 1])],
 			20, 12, 1.5
-		), 22, [202, 490]
+		), 22, [215, 490]
 	),
 	new rhythmStruct([
 		new rhyUnit(0.1, 0, [1,1,0], [0,.1,.1]),
@@ -941,11 +942,11 @@ Parts[2].rhythmsa = [
 	], 4,[490, 524]),
 	new rhythmStruct(
 		randomlyPlaceStruct(
-			[new rhyUnit(0.1, 0, [1, 1, 0], [0, 0.1, 0.1]), 
-			new rhyUnit(0.1, .125, [1, 1, 0], [0, 0.1, 0.1]), 
-			new rhyUnit(0.1, 0.25, [1, 1, 0], [0, 0.1, 0.1]), 
-			new rhyUnit(0.1, 0.375, [1, 1, 0], [0, 0.1, 0.1])], 
-			20, 16, 0.5
+			[new rhyUnit(0.2, 0, [1, 1, 0], [0, 0.2, 0.2]), 
+			new rhyUnit(0.6, .3, [1, 1, 0], [0, 0.6, 0.6]), 
+			new rhyUnit(0.2, 1, [1, 1, 0], [0, 0.2, 0.2]), 
+			],
+			20, 8, 1.1
 		), 22, [524, 588]
 	),
 	new rhythmStruct([
@@ -1028,7 +1029,7 @@ Parts[3].rhythmsa = [
 			new rhyUnit(0.1, 0.25, [1, 1, 0], [0, 0.1, 0.1]), 
 			new rhyUnit(0.1, 0.375, [1, 1, 0], [0, 0.1, 0.1]), 
 			],
-			20, 30, 0.5
+			20, 15, 0.5
 		), 20, [319, 490]
 	),
 	new rhythmStruct([
@@ -1083,7 +1084,7 @@ Parts[4].rhythmsa = [
 		new rhyUnit(0.1, 5.75, [1, 1, 0], [0, 0.1, 0.1]), 
 		new rhyUnit(0.1, 5.875, [1, 1, 0], [0, 0.1, 0.1]), 
 		new rhyUnit(4.5, 6, [1, 1, 0], [0, 0.5, 3.5])
-	],10, [273, 294]),
+	],10, [273, 293]),
 	new rhythmStruct([
 		new rhyUnit(0.1, 0.5, [1, 1, 0], [0, 0.1, 0.1]), 
 		new rhyUnit(0.1, 0.625, [1, 1, 0], [0, 0.1, 0.1]), 
@@ -1096,7 +1097,7 @@ Parts[4].rhythmsa = [
 		new rhyUnit(0.1, 4.75, [1, 1, 0], [0, 0.1, 0.1]), 
 		new rhyUnit(0.1, 4.875, [1, 1, 0], [0, 0.1, 0.1]), 
 		new rhyUnit(3.5, 5, [1, 1, 0], [0, 0.5, 3.5])
-	],8, [294, 311]),
+	],8, [293, 311]),
 	new rhythmStruct([
 		new rhyUnit(0.1, 0.5, [1, 1, 0], [0, 0.1, 0.1]), 
 		new rhyUnit(0.1, 0.625, [1, 1, 0], [0, 0.1, 0.1]), 
@@ -1113,12 +1114,38 @@ Parts[4].rhythmsa = [
 	new rhythmStruct(
 		randomlyPlaceStruct(
 			[new rhyUnit(0.1, 0, [1, 1, 0], [0, 0.1, 0.1]), 
-			new rhyUnit(0.1, .125, [1, 1, 0], [0, 0.1, 0.1]), 
-			new rhyUnit(0.1, 0.25, [1, 1, 0], [0, 0.1, 0.1]), 
-			new rhyUnit(0.1, 0.375, [1, 1, 0], [0, 0.1, 0.1]), 
+			new rhyUnit(0.3, .125, [1, 1, 0], [0, 0.3, 0.3]), 
+			new rhyUnit(0.1, .45, [1, 1, 0], [0, 0.1, 0.1]), 
 			],
-			20, 30, 0.5
-		), 20, [319, 490]
+			19, 12, 0.6
+		), 20, [319, 359]
+	),
+	new rhythmStruct(
+		randomlyPlaceStruct(
+			[new rhyUnit(0.2, 0, [1, 1, 0], [0, 0.2, 0.2]), 
+			new rhyUnit(0.6, .3, [1, 1, 0], [0, 0.6, 0.6]), 
+			new rhyUnit(0.2, 1, [1, 1, 0], [0, 0.2, 0.2]), 
+			],
+			19, 8, 1.3
+		), 20, [359, 399]
+	),
+	new rhythmStruct(
+		randomlyPlaceStruct(
+			[new rhyUnit(0.15, 0, [1, 1, 0], [0, 0.1, 0.1]), 
+			new rhyUnit(0.45, 0.1875, [1, 1, 0], [0, 0.45, 0.45]), 
+			new rhyUnit(0.15, 0.675, [1, 1, 0], [0, 0.15, 0.15]), 
+			],
+			19, 12, 0.7
+		), 21, [399, 420]
+	),
+	new rhythmStruct(
+		randomlyPlaceStruct(
+			[new rhyUnit(0.2, 0, [1, 1, 0], [0, 0.2, 0.2]), 
+			new rhyUnit(0.3, .225, [1, 1, 0], [0, 0.3, 0.3]), 
+			new rhyUnit(0.1, .55, [1, 1, 0], [0, 0.1, 0.1]), 
+			],
+			19, 13, 0.75
+		), 20, [420, 490]
 	),
 	new rhythmStruct([
 		new rhyUnit(0.1, 0, [1, 1, 0], [0, 0.1, 0.1]), 
@@ -1198,8 +1225,10 @@ Parts[6].rhythmsa = [
 	new rhythmStruct(
 		randomlyPlaceStruct(
 			[new rhyUnit(0.1, 0, [1, 1, 0], [0, 0.1, 0.1]), 
-			new rhyUnit(0.1, .125, [1, 1, 0], [0, 0.1, 0.1])], 
-			20, 25, 0.25
+			new rhyUnit(0.3, .125, [1, 1, 0], [0, 0.3, 0.3]), 
+			new rhyUnit(0.1, .45, [1, 1, 0], [0, 0.1, 0.1]), 
+			],
+			22, 15, 0.6
 		), 22, [524, 588]
 	),
 	new rhythmStruct([
@@ -1224,9 +1253,9 @@ Parts[6].rhythmsa = [
 // Trombone
 Parts[7].rhythmsa = [
 	new rhythmStruct([
-		new rhyUnit(7, 0, [0, 1, 0.2, 0], [0, 2, 6, 7]),
-		new rhyUnit(9, 7, [0, 1, 0.7, 0], [0, 2, 6, 9]),
-		new rhyUnit(5, 16, [0, 1, 1, 0], [0, 2, 3, 5])
+		new rhyUnit(7, 0, [0, 1, 0.2, 0], [0, 2, 5, 6]),
+		new rhyUnit(9, 7, [0, 1, 0.7, 0], [0, 2, 6, 8]),
+		new rhyUnit(7, 16, [0, 1, 1, 0], [0, 2, 3, 4])
 	], 21, [0,490]),
 	new rhythmStruct([
 		new rhyUnit(0.1, 0, [1, 1, 0], [0, 0.1, 0.1]), 
@@ -1238,8 +1267,10 @@ Parts[7].rhythmsa = [
 	new rhythmStruct(
 		randomlyPlaceStruct(
 			[new rhyUnit(0.1, 0, [1, 1, 0], [0, 0.1, 0.1]), 
-			new rhyUnit(0.1, .125, [1, 1, 0], [0, 0.1, 0.1])], 
-			20, 28, 0.25
+			new rhyUnit(0.3, .125, [1, 1, 0], [0, 0.3, 0.3]), 
+			new rhyUnit(0.1, .45, [1, 1, 0], [0, 0.1, 0.1]), 
+			],
+			22, 15, 0.6
 		), 22, [524, 588]
 	),
 	new rhythmStruct([
@@ -1255,10 +1286,10 @@ Parts[7].rhythmsa = [
 // Piano I
 var pnoArr1 = randomlyPlaceStruct(
 	[new rhyUnit(0.1, 0, [1, 1, 0], [0, 0.1, 0.1]), 
-	new rhyUnit(0.1, .125, [1, 1, 0], [0, 0.1, 0.1]), 
-	new rhyUnit(0.1, 0.25, [1, 1, 0], [0, 0.1, 0.1]), 
+	new rhyUnit(0.3, .125, [1, 1, 0], [0, 0.3, 0.3]), 
+	new rhyUnit(0.1, .45, [1, 1, 0], [0, 0.1, 0.1]), 
 	],
-	15, 24, 0.5
+	13, 19, 0.6
 );
 pnoArr1.push(new rhyUnit(4.5, 15.5, [1,1,0], [0, 4, 4.5]));
 Parts[8].rhythmsa = [
@@ -1517,8 +1548,78 @@ Parts[11].rhythmsa = [
 			new rhyUnit(0.1, 0.25, [1, 1, 0], [0, 0.1, 0.1]), 
 			new rhyUnit(0.1, 0.375, [1, 1, 0], [0, 0.1, 0.1]), 
 			],
-			20, 30, 0.5
-		), 20, [306, 507]
+			20, 20, 0.7
+		), 20, [306, 326]
+	),
+	new rhythmStruct(
+		randomlyPlaceStruct(
+			[new rhyUnit(0.1, 0, [1, 1, 0], [0, 0.1, 0.1]), 
+			new rhyUnit(0.2, .15, [1, 1, 0], [0, 0.2, 0.2]), 
+			new rhyUnit(0.1, 0.4, [1, 1, 0], [0, 0.1, 0.1]), 
+			new rhyUnit(0.2, 0.55, [1, 1, 0], [0, 0.2, 0.2]), 
+			],
+			20, 18, 0.7
+		), 20, [326, 346]
+	),
+	new rhythmStruct(
+		randomlyPlaceStruct(
+			[new rhyUnit(0.1, 0, [1, 1, 0], [0, 0.1, 0.1]), 
+			new rhyUnit(0.1, .125, [1, 1, 0], [0, 0.1, 0.1]), 
+			new rhyUnit(0.1, 0.25, [1, 1, 0], [0, 0.1, 0.1]), 
+			new rhyUnit(0.1, 0.375, [1, 1, 0], [0, 0.1, 0.1]), 
+			],
+			20, 25, 0.5
+		), 20, [346, 386]
+	),
+	new rhythmStruct(
+		randomlyPlaceStruct(
+			[new rhyUnit(0.1, 0, [1, 1, 0], [0, 0.1, 0.1]), 
+			new rhyUnit(0.2, .15, [1, 1, 0], [0, 0.2, 0.2]), 
+			new rhyUnit(0.1, 0.4, [1, 1, 0], [0, 0.1, 0.1]), 
+			new rhyUnit(0.2, 0.55, [1, 1, 0], [0, 0.2, 0.2]), 
+			],
+			20, 15, 0.7
+		), 20, [386, 426]
+	),
+	new rhythmStruct(
+		randomlyPlaceStruct(
+			[new rhyUnit(0.1, 0, [1, 1, 0], [0, 0.1, 0.1]), 
+			new rhyUnit(0.1, .125, [1, 1, 0], [0, 0.1, 0.1]), 
+			new rhyUnit(0.1, 0.25, [1, 1, 0], [0, 0.1, 0.1]), 
+			],
+			20, 25, 0.4
+		), 20, [426, 446]
+	),
+	new rhythmStruct(
+		randomlyPlaceStruct(
+			[new rhyUnit(0.1, 0, [1, 1, 0], [0, 0.1, 0.1]), 
+			new rhyUnit(0.1, .125, [1, 1, 0], [0, 0.1, 0.1]), 
+			new rhyUnit(0.1, 0.25, [1, 1, 0], [0, 0.1, 0.1]), 
+			new rhyUnit(0.1, 0.375, [1, 1, 0], [0, 0.1, 0.1]), 
+			new rhyUnit(0.1, 0.4, [1, 1, 0], [0, 0.1, 0.1]), 
+			],
+			20, 20, 0.65
+		), 20, [446, 466]
+	),
+	new rhythmStruct(
+		randomlyPlaceStruct(
+			[new rhyUnit(0.1, 0, [1, 1, 0], [0, 0.1, 0.1]), 
+			new rhyUnit(0.2, .15, [1, 1, 0], [0, 0.2, 0.2]), 
+			new rhyUnit(0.1, 0.4, [1, 1, 0], [0, 0.1, 0.1]), 
+			new rhyUnit(0.2, 0.55, [1, 1, 0], [0, 0.2, 0.2]), 
+			],
+			20, 17, 0.7
+		), 20, [466, 486]
+	),
+	new rhythmStruct(
+		randomlyPlaceStruct(
+			[new rhyUnit(0.1, 0, [1, 1, 0], [0, 0.1, 0.1]), 
+			new rhyUnit(0.1, .125, [1, 1, 0], [0, 0.1, 0.1]), 
+			new rhyUnit(0.1, 0.25, [1, 1, 0], [0, 0.1, 0.1]), 
+			new rhyUnit(0.1, 0.375, [1, 1, 0], [0, 0.1, 0.1]), 
+			],
+			21, 25, 0.5
+		), 20, [486, 587]
 	),
 	new rhythmStruct([
 		new rhyUnit(10, 0 , [1,1], [0,5])
@@ -1641,7 +1742,27 @@ Parts[13].rhythmsa = [
 		new rhyUnit(4, 0, [0, 1, 0.2, 0], [0, 2, 3, 4]),
 		new rhyUnit(2, 4, [1,1,0], [0, 1,2]),
 		new rhyUnit(6, 6, [0, 1, 1, 0], [0, 2, 4, 6])
-	], 12, [92,249]),
+	], 12, [92,140]),
+	new rhythmStruct([
+		new rhyUnit(5, 0, [0, 1, 0.2, 0], [0, 2, 4, 5]),
+		new rhyUnit(2, 5, [1,1,0], [0, 1,2]),
+		new rhyUnit(7, 7, [0, 1, 1, 0], [0, 2, 5, 7])
+	], 14, [140,168]),
+	new rhythmStruct([
+		new rhyUnit(3, 0, [0, 1, 0], [0, 1, 3]),
+		new rhyUnit(2, 3, [1,1,0], [0, 1,2]),
+		new rhyUnit(5, 5, [0, 1, 1, 0], [0, 2, 3, 5])
+	], 10, [168,188]),
+	new rhythmStruct([
+		new rhyUnit(5, 0, [0, 1, 0.2, 0], [0, 2, 4, 5]),
+		new rhyUnit(2, 5, [1,1,0], [0, 1,2]),
+		new rhyUnit(7, 7, [0, 1, 1, 0], [0, 2, 5, 7])
+	], 14, [188,216]),
+	new rhythmStruct([
+		new rhyUnit(4, 0, [0, 1, 0.2, 0], [0, 2, 3, 4]),
+		new rhyUnit(2, 3, [1,1,0], [0, 1,2]),
+		new rhyUnit(5, 5, [0, 1, 1, 0], [0, 2, 3, 5])
+	], 10, [168,188]),
 	new rhythmStruct(
 		randomlyPlaceStruct(
 			[new rhyUnit(0.3, 0, [1, 1, 0], [0, 0.3, 0.3])],
@@ -1699,8 +1820,8 @@ Parts[14].rhythmsa = [
 	], 1, [177,393]),
 	new rhythmStruct(
 		randomlyPlaceStruct(
-			[new rhyUnit(0.1, 0, [1, 1, 0], [0, 0.1, 0.1]), 
-			new rhyUnit(0.1, .125, [1, 1, 0], [0, 0.1, 0.1])
+			[new rhyUnit(0.3, 0, [1, 1], [0, 0.3]), 
+			new rhyUnit(0.3, .333, [1, 1], [0, 0.3])
 			],
 			20, 15, 0.25
 		), 20, [393, 490]
@@ -1734,7 +1855,7 @@ fs.writeFile('Rhythms.txt', partRhythmsString, function (err){
 	if(err) throw err;
 });
 function loadPartNotes(){
-	for(part =0; part < Parts.length; part++){
+	for(var part =0; part < Parts.length; part++){
 		console.log(Parts[part].name);
 		var timeBetween = 98;
 		var holdLength = 16;
@@ -1775,7 +1896,7 @@ function loadPartNotes(){
 
 function loadDoc(){
 	var parser = new xml2js.Parser();
-	fs.readFile(__dirname + '/Score_v3.xml','utf8', function(err, data){
+	fs.readFile(__dirname + '/Current Score.xml','utf8', function(err, data){
 		parser.parseString(data, function(err, res){
 			partXML = res['score-partwise'];
 			//console.log(partXML);
@@ -1797,6 +1918,7 @@ function main(){
 	}
 	generateSequence();
 }
+
 
 app.get('/', function (req, res) {
 	res.sendFile(__dirname + '/index.html');

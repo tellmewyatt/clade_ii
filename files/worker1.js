@@ -1,9 +1,12 @@
+importScripts("webmidi.js");
+
 var totalTime = 1192;
 var messageCount = 0;
 var Parts = [];
 var scale = ["C","C#","D","D#","E","F","F#","G","G#","A","A#","B",];
 var diatonicscale = ["C","D","E","F","G","A","B",];
 var Notes = [];
+var midiOut;
 class Part{
 	constructor(pname, clef, transposition=0, num){
 		this.name = pname;
@@ -133,18 +136,12 @@ class Part{
 						&& time < this.rhythms[r].interval[0]){
 							possibleEnvs.push(this.rhythms[r]);
 							possEnvsI.push(r);
-							//console.log(this.name, this.rhythms, time);
 							break;
 						}
 					}
 				}
 				for(var i =0; i< possibleEnvs.length; i++){
-					//console.log(this.name, possibleEnvs[i]);
 					this.pushEnvs(possibleEnvs[i],possEnvsI[i], time);
-					/*for(var x = 0; x< possibleEnvs[i].times.length; x++){
-						this.currentEnvs.push(possEnvsI[i]);
-						this.currentEnvTs.push(possibleEnvs[i].times[x]-time);
-					}*/
 				}
 			}else{
 				var possibleEnvs = [];
@@ -152,12 +149,7 @@ class Part{
 				var possEnvsI = [];
 				possEnvsI.push(0);
 				for(var i =0; i< possibleEnvs.length; i++){
-					//console.log(this.name, possibleEnvs[i]);
 					this.pushEnvs(possibleEnvs[i],possEnvsI[i], time);
-					/*for(var x = 0; x< possibleEnvs[i].times.length; x++){
-						this.currentEnvs.push(possEnvsI[i]);
-						this.currentEnvTs.push(possibleEnvs[i].times[x]-time);
-					}*/
 				}
 			}
 			this.appendedEnvs = true;
@@ -209,6 +201,7 @@ class Part{
 		return [ret1,ret2];
 	}
 }
+
 onmessage = function(e) {
 	if (messageCount == 0){
 		// Set Note Values

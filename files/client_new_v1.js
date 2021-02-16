@@ -55,6 +55,7 @@ var msCount = 0;
 var wWorker = new Worker('worker1.js');
 var workerReturn;
 var setT = false;
+var midiTF = true;
 wWorker.onmessage = function(e){
 	workerReturn = [];
 	workerReturn = e.data;
@@ -560,37 +561,45 @@ class Part{
 		return rets;
 	}
 	writeMIDI(){
-		if(Math.round(this.currentEnvTs[1]) == 0){
-			for(var u =0; u < this.rhythms[this.currentEnvs[1][0]].units.length; u++){
-				var unit = this.rhythms[this.currentEnvs[1][0]].units[u];
-				midiOut.sendControlChange(7,
-					Math.round(unit.env[0]*127), 
-					this.idNum+1,
-					{
-						time: WebMidi.time+unit.time*1000
-					}
-				);
-				if(unit.duration < 1){
-					console.log(this.name, "Playing:", this.sequence[CompClock+Math.floor(unit.time)], "for", unit.duration, 'seconds at', unit.time, CompClock+unit.time);
-					if(this.sequence[CompClock+Math.floor(unit.time)] != "r"){
-						midiOut.playNote(this.sequence[CompClock+Math.floor(unit.time)], this.idNum+1, {
-							duration:unit.duration*1000-50,
-							time: WebMidi.time+unit.time*1000}
-						);
-					}
-				} else {
-					var td = this.findDurs(unit);
-					for(var t = 0; t<td.length; t++){
-						console.log(this.name, "Playing:", td[t][2], "for", td[t][1], 'seconds at', td[t][0], CompClock+td[t][0]);
-						if(typeof(td[t][2]) == "number"){
-							midiOut.playNote(td[t][2], this.idNum+1, {
-								duration:td[t][1]*1000-50,
-								time: WebMidi.time+td[t][0]*1000}
+		if((Math.round(this.currentEnvTs[1]) == 0 || Math.round(this.currentEnvTs[0]) == 0) && play == true){
+			var xi;
+			if(Math.round(this.currentEnvTs[1]) == 0){
+				xi = 1;
+			}else{
+				xi= 0;
+			}
+			for(var u =0; u < this.rhythms[this.currentEnvs[xi][0]].units.length; u++){
+				var unit = this.rhythms[this.currentEnvs[xi][0]].units[u];
+				if(unit.time+CompClock < this.rhythms[this.currentEnvs[xi][0]].interval[1]){
+					midiOut.sendControlChange(7,
+						Math.round(unit.env[0]*127), 
+						this.idNum+1,
+						{
+							time: WebMidi.time+unit.time*1000
+						}
+					);
+					if(unit.duration < 1){
+						console.log(this.name, "Playing:", this.sequence[CompClock+Math.floor(unit.time)], "for", unit.duration, 'seconds at', unit.time, CompClock+unit.time);
+						if(this.sequence[CompClock+Math.floor(unit.time)] != "r"){
+							midiOut.playNote(this.sequence[CompClock+Math.floor(unit.time)], this.idNum+1, {
+								duration:unit.duration*1000-50,
+								time: WebMidi.time+unit.time*1000}
 							);
 						}
+					} else {
+						var td = this.findDurs(unit);
+						for(var t = 0; t<td.length; t++){
+							console.log(this.name, "Playing:", td[t][2], "for", td[t][1], 'seconds at', td[t][0], CompClock+td[t][0]);
+							if(typeof(td[t][2]) == "number"){
+								midiOut.playNote(td[t][2], this.idNum+1, {
+									duration:td[t][1]*1000-50,
+									time: WebMidi.time+td[t][0]*1000}
+								);
+							}
+						}
 					}
+					createMIDIramp(unit, this.idNum, this.name);
 				}
-				createMIDIramp(unit, this.idNum, this.name);
 			}
 		}
 	}
@@ -730,7 +739,7 @@ function doFrame(time){
 				Parts[p].drawPart();
 			}
 		}
-		if(change && CompClock < totalTime){
+		if(change && CompClock < totalTime+1){
 			CompClock++;
 			wWorker.postMessage([CompClock+1, false]);
 		}
@@ -786,6 +795,11 @@ function drawCountDown(num){
 	}else{
 		wWorker.postMessage([CompClock+1, false]);
 		window.requestAnimationFrame(doFrame);
+		if(midiTF){
+			for(var p = 0; p < Parts.length; p++){
+				Parts[p].writeMIDI();
+			}
+		}
 	}
 }
 function setTime(){
