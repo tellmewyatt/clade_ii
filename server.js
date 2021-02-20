@@ -1946,7 +1946,7 @@ io.on('connection', (socket) => {
   });
 });
 var pword;
-http.listen(3000, () => {
+http.listen(process.env.PORT || 3000, () => {
 	pword = Math.round(Math.random()*9).toString()+Math.round(Math.random()*9).toString()+Math.round(Math.random()*9).toString()+Math.round(Math.random()*9).toString()
 	console.log(`Server running on port 3000, Passcode:`+pword);
 });
