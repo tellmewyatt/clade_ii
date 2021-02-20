@@ -67,6 +67,9 @@ wWorker.onmessage = function(e){
 }
 // "Enter" to start playback "Esc" to stop, play is playback var
 var play = false;
+// time syncing stuff
+var tsSet = false;
+var timeOffset = 0;
 // FOR CLEFS: q = treble, l = bass, n = alto 
 // Load Canvas and Context
 function setUpMIDI(){
@@ -684,8 +687,16 @@ function createTimeSync(){
 	// This code sets up the timesync server, which is used to sync the playback between the various clients and the server
 	ts = timesync.create({
 		server: '/timesync',
-		interval: 200
+		interval: 20000
 	});
+	ts.on('change', setOffset);
+}
+function setOffset(){
+	var d = new Date();
+	var a = d.getTime();
+	tsSet = false;
+	var oldOffset = timeOffset;
+	timeOffset = d-ts.now()-oldOffset;
 }
 // Does the actual drawing of the page
 function doFrame(time){
@@ -699,7 +710,12 @@ function doFrame(time){
 			prevFrame = time;
 		}
 		// difference in time
-		var changems = time - prevFrame;
+		var changems = time+ - prevFrame;
+		if(!tsSet){
+			changems-=timeOffset;
+			tsSet = true;
+			console.log("offset:", timeOffset);
+		}
 		var change = false;
 		var diff = 0;
 		msCount+= changems;
@@ -732,9 +748,6 @@ function doFrame(time){
 		}
 		if(change && CompClock < totalTime+1){
 			CompClock++;
-			var d = new Date();
-			d.getTime();
-			console.log(ts.now()-d.getTime());
 			wWorker.postMessage([CompClock+1, false]);
 		}
 		prevFrame = time;
