@@ -374,12 +374,12 @@ function generateSequence(){
 		var partsJSON = JSON.stringify(Parts);
 		fs.writeFile('Parts.json', partsJSON, function (err){
 			if(err) throw err;
-		});
+		});/*
 		var d = new Date();
 		var fname = "/backup_parts/" + d.getFullYear() + "-" + d.getMonth() + "-" + d.getDate() + "_" + d.getHours() + "-" + d.getMinutes() + "-" + d.getSeconds()
 		fs.writeFile(__dirname+fname, partsJSON, function (err){
 			if(err) throw err;
-		});
+		});*/
 		drawSVG();
 	}
 	firstPass();
