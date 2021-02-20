@@ -372,9 +372,11 @@ function generateSequence(){
 	}
 	function exportParts(){
 		var partsJSON = JSON.stringify(Parts);
+		console.log("Writing Parts.json");
 		fs.writeFile('Parts.json', partsJSON, function (err){
 			if(err) throw err;
-		});/*
+		});
+		console.log("Finished writing Parts.json")/*
 		var d = new Date();
 		var fname = "/backup_parts/" + d.getFullYear() + "-" + d.getMonth() + "-" + d.getDate() + "_" + d.getHours() + "-" + d.getMinutes() + "-" + d.getSeconds()
 		fs.writeFile(__dirname+fname, partsJSON, function (err){
@@ -497,9 +499,9 @@ function drawSVG(){
 	}
 	
 	txt+= "</svg><div id='key' style='position:fixed; top:0px; right:50px'>"+key+"</div></body></html>";
-	fs.writeFile('chart.html', txt, function (err){
+	/*fs.writeFile('chart.html', txt, function (err){
 	if(err) throw err;
-	});
+	});*/
 }
 function findStartingNote(part, time, goal, mval){
 	var noteArray = [];
@@ -1851,9 +1853,6 @@ for(var i = 0; i<Parts.length; i++){
 		partRhythmsString = partRhythmsString.concat("\n");
 	}
 }
-fs.writeFile('Rhythms.txt', partRhythmsString, function (err){
-	if(err) throw err;
-});
 function loadPartNotes(){
 	for(var part =0; part < Parts.length; part++){
 		console.log(Parts[part].name);
