@@ -1932,7 +1932,6 @@ app.use('/timesync', timesyncServer.requestHandler);
 io.on('connection', (socket) => {
   console.log('a user connected');
   console.log(currentTime);
-  io.emit('message', "CompClock," + currentTime.toString());
   socket.on('disconnect', () => {
 	console.log('user disconnected'); 
   });
