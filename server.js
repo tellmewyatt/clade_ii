@@ -499,9 +499,9 @@ function drawSVG(){
 	}
 	
 	txt+= "</svg><div id='key' style='position:fixed; top:0px; right:50px'>"+key+"</div></body></html>";
-	/*fs.writeFile('chart.html', txt, function (err){
+	fs.writeFile('chart.html', txt, function (err){
 	if(err) throw err;
-	});*/
+	});
 }
 function findStartingNote(part, time, goal, mval){
 	var noteArray = [];
