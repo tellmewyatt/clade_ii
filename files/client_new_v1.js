@@ -751,7 +751,7 @@ function doFrame(time){
 			wWorker.postMessage([CompClock+1, false]);
 		}
 		prevFrame = time;
-		if(play == true && CompClock < totalTime-1){
+		if(play == true && CompClock < totalTime){
 			window.requestAnimationFrame(doFrame);
 		}
 	}else{
