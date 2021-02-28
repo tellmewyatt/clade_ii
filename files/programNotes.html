@@ -4,48 +4,56 @@
 		<title>Performance Notes - Clade II - Wyatt Cannon</title>
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 	</head>
-	<body>
-		<h1>Clade II</h1>
-		<a href='http://clade-ii.herokuapp.com'>Full Score for Players</a><br/>
-		<a href='http://clade-ii.herokuapp.com/serverHost.html'>Full Navigable Score (Only choose this is if you will be controlling the session)</a>
-		<h2>Navigating the Score</h2>
-		Click anywhere on the top timeline to navigate to that position in time. Press "enter" to start playback, "esc" to pause playback.
-		<h2>Performance Notes</h2>
-		<h3>Explanation of Notation</h3>
-		<p>The score is in a grid layout. Each part is provided with a visual representation of dynamics, articulation, and attack
-		called an "envelope". This is the pink shape displayed behind the staff. Each performer starts to play either once the start countdown reaches
-		0, or when the envelope reaches the left line on the screen. The loudest dynamic is represented when the top of the envelope reaches the top line of the staff. Silence is represented
-		by an absence of the envelope. Additionally, the staff for each part will disappear while the part rests, and reappear 5 seconds before each entrance.</p>
-		<p>The envelopes should be treated as general guidelines. Musicians are free to alter the envelopes or improvise rhythms as long as the general character lines up with envelopes currently being displayed. Rehearsals of the piece
-		may involve discussion of what kind of alterations to make where.
-		</p>
-		<p>Players are also encouraged to experiment with different timbres throughout the piece, as long as the main, notated pitch is evident in the sound. Thus, the use of techniques such as mutes, sul ponticello and others are encouraged.
-		However, all timbral changes should either be gradual or take effect immediately at the instrument's entrance (when the part reappears on the score).</p>
-		<h4>Special Notes for Pianists</h4>
-		<p>Pianists can play the specified pitch in different octaves,
-		as long as the predominant octave is the notated one. Additionally, some of the envelopes notated are not pianistic (crescendos and decrescendos). It is
-		up to the pianist(s) to decide how to interpret these markings.</p>
-		<h3>
-		<b>Full instrumentation:</b>
-		</h3>
-		<ul>
-			<li>Flute</li>
-			<li>Oboe</li>
-			<li>Alto Saxophone</li>
-			<li>Bassoon</li>
-			<li>Bass Clarinet</li>
-			<li>Horn</li>
-			<li>Trumpet</li>
-			<li>Trombone</li>
-			<li>2 Pianists (can be played on either one piano or two)</li>
-			<li>2 Violins</li>
-			<li>Viola</li>
-			<li>Violoncello</li>
-			<li>Contrabass</li>
-		</ul>
-		<h3>"Pillar Chords"</h3>
-		<p>"Pillar chords" are verticalities that occur for 16 seconds every 98 seconds. These form the structure of the piece. After this period, the parts are allowed to wander and meander according to an algorithm, where the parts are gradually funneled into the notes
-		of the next pillar chord, and the probability of changing pithes gradually increases.
-		<div style='display:inline'><img src='graphic.svg'/></div>
+	<body style='padding:0px;'>
+		<div style='max-width:800px; margin: 0 auto'>
+			<h1>Clade II</h1>
+			<a href='http://clade-ii.herokuapp.com'>Full Score for Players</a><br/>
+			<a href='http://clade-ii.herokuapp.com/serverHost.html'>Full Navigable Score (Only choose this is if you will be controlling the session)</a>
+			<h2>Navigating the Score</h2>
+			Click anywhere on the top timeline to navigate to that position in time. Press "enter" to start playback, "esc" to pause playback.
+			<h2>Performance Notes</h2>
+			<h3>Explanation of Notation</h3>
+			<p>The score is in a grid layout. Each part is provided with a visual representation of dynamics, articulation, and attack
+			called an "envelope". This is the pink shape displayed behind the staff. Each performer starts to play either once the start countdown reaches
+			0, or when the envelope reaches the left line on the screen. The loudest dynamic is represented when the top of the envelope reaches the top line of the staff. Silence is represented
+			by an absence of the envelope. Additionally, the staff for each part will disappear while the part rests, and reappear 5 seconds before each entrance.</p>
+			<p>The envelopes should be treated as general guidelines. Musicians are free to alter the envelopes or improvise rhythms as long as the general character lines up with envelopes currently being displayed. Rehearsals of the piece
+			may involve discussion of what kind of alterations to make where.
+			</p>
+			<p>Players are also encouraged to experiment with different timbres throughout the piece, as long as the main, notated pitch is evident in the sound. Thus, the use of techniques such as mutes, sul ponticello and others are encouraged.
+			However, all timbral changes should either be gradual or take effect immediately at the instrument's entrance (when the part reappears on the score).</p>
+			<h4>Special Notes for Pianists</h4>
+			<p>Pianists can play the specified pitch in different octaves,
+			as long as the predominant octave is the notated one. Additionally, some of the envelopes notated are not pianistic (crescendos and decrescendos). It is
+			up to the pianist(s) to decide how to interpret these markings.</p>
+			<h3>
+			<b>Full instrumentation:</b>
+			</h3>
+			<ul>
+				<li>Flute</li>
+				<li>Oboe</li>
+				<li>Alto Saxophone</li>
+				<li>Bassoon</li>
+				<li>Bass Clarinet</li>
+				<li>Horn</li>
+				<li>Trumpet</li>
+				<li>Trombone</li>
+				<li>2 Pianists (can be played on either one piano or two)</li>
+				<li>2 Violins</li>
+				<li>Viola</li>
+				<li>Violoncello</li>
+				<li>Contrabass</li>
+			</ul>
+			<h2>Explanation of Composition</h2>
+			<p>"Pillar chords" are verticalities that occur for 16 seconds every 98 seconds. These form the structure of the piece. After this period, the parts are allowed to wander and meander according to an algorithm, where the parts are gradually funneled into the notes
+			of the next pillar chord, and the probability of changing pithes gradually increases. The algorithm is designed so that each time a new instrument enters, it plays the same note as another instrument that is already playing, if possible. The music generated is different every time the piece is performed.</p>
+			<p>The pillar chords are shown on the following diagram, along with when they occur in seconds. </p>
+		</div>
+		<img style='width:100%' src='graphic.svg'/></div>
+		<div style='max-width:800px; margin: 0 auto'>
+			The following is a chart displaying every note that was generated for this performance:
+		</div>
+			<iframe src='chart.html' style='width:100%; height:670px; border:none'></iframe>
+			<div align='center'>&copy; Copyright 2021 Wyatt Cannon</div>
 	</body>
 </html>

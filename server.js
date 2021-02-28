@@ -455,7 +455,7 @@ function drawSVG(){
 	var scalefact = 5;
 	var transf = 0;
 	var yscale = 5;
-	var txt = "<html><head></head><body><svg width='"+scalefact*Parts[0].sequence.length+"' height='"+(yscale*127)+"'>";
+	var txt = "<html><head></head><body style='padding:0px;'><svg width='"+scalefact*Parts[0].sequence.length+"' height='"+(yscale*127)+"'>";
 	var txt2 = "";
 	var key = "";
 	for(var i = 0; i < 127; i++){
@@ -499,7 +499,7 @@ function drawSVG(){
 	}
 	
 	txt+= "</svg><div id='key' style='position:fixed; top:0px; right:50px'>"+key+"</div></body></html>";
-	fs.writeFile('chart.html', txt, function (err){
+	fs.writeFile('files/chart.html', txt, function (err){
 	if(err) throw err;
 	});
 }
