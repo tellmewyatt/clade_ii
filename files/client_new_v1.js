@@ -687,7 +687,8 @@ function createTimeSync(){
 	// This code sets up the timesync server, which is used to sync the playback between the various clients and the server
 	ts = timesync.create({
 		server: '/timesync',
-		interval: 20000
+		interval: 20000,
+		repeat: 20
 	});
 	ts.on('change', setOffset);
 }
