@@ -698,6 +698,7 @@ function setOffset(){
 	tsSet = false;
 	var oldOffset = timeOffset;
 	timeOffset = d-ts.now()-oldOffset;
+	timeOffset = 0;
 }
 // Does the actual drawing of the page
 function doFrame(time){
@@ -725,6 +726,11 @@ function doFrame(time){
 			var diff = (msCount - 1000)/1000;
 			msCount = 0;
 			change = true;
+			var d = new Date();
+			var t=d.getTime();
+			var x = ""+ t;
+			var b = x.split("");
+			console.log(b[b.length-4], b[b.length-3], b[b.length-2], b[b.length-1]);
 		}
 		for(var p = 0; p < Parts.length; p++){
 			if(change && CompClock < totalTime-1){
