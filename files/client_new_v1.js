@@ -688,7 +688,7 @@ function createTimeSync(){
 	ts = timesync.create({
 		server: '/timesync',
 		interval: 20000,
-		repeat: 20
+		repeat: 5
 	});
 	ts.on('change', setOffset);
 }
@@ -724,13 +724,8 @@ function doFrame(time){
 		var nextNoteInc = changems/1000;
 		if(msCount > 1000){
 			var diff = (msCount - 1000)/1000;
-			msCount = 0;
+			msCount = msCount - 1000;
 			change = true;
-			var d = new Date();
-			var t=d.getTime();
-			var x = ""+ t;
-			var b = x.split("");
-			console.log(b[b.length-4], b[b.length-3], b[b.length-2], b[b.length-1]);
 		}
 		for(var p = 0; p < Parts.length; p++){
 			if(change && CompClock < totalTime-1){
