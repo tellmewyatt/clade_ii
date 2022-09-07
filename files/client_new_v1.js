@@ -661,6 +661,9 @@ function main(){
 	wWorker.postMessage(Parts);
 	createTimeSync();
 	createSocketIO();
+	CompClock = 0;
+	setT = true;
+	wWorker.postMessage([CompClock, true]);
 }
 // Sets up SocketIO. This is how the client communicates with the server
 function createSocketIO(){
