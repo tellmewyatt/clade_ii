@@ -499,9 +499,10 @@ function drawSVG(){
 	}
 	
 	txt+= "</svg><div id='key' style='position:fixed; top:0px; right:50px'>"+key+"</div></body></html>";
-	fs.writeFile('files/chart.html', txt, function (err){
+	/*fs.writeFile('files/chart.html', txt, function (err){
 	if(err) throw err;
-	});
+	});*/
+	return txt
 }
 function findStartingNote(part, time, goal, mval){
 	var noteArray = [];
@@ -1925,7 +1926,9 @@ app.get('/', function (req, res) {
 app.get('/Parts.json', function (req, res) {
 	res.json(Parts);
 });
-
+app.get('/chart.html', (req, res) => {
+	res.send(drawSVG())
+})
 app.use(express.static('files'));
 app.use('/timesync', timesyncServer.requestHandler);
 
