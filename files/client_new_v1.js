@@ -106,7 +106,7 @@ function setValues1(width,height){
 	ledgerLineThickness = staffLineSpacing;
 	accidentalspace = staffLineSpacing*2;
 	loadDoc();
-	setUpMIDI();
+	midiTF ? setUpMIDI() : null;
 }
 function setPartPositions(){
 	var am = 0;
