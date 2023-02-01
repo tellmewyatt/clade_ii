@@ -5,5 +5,8 @@
     "socket.io": "^3.1.1",
     "timesync": "^1.0.8",
     "xml2js": "^0.4.23"
+  },
+  "scripts": {
+    "start": "node server.js"
   }
 }
