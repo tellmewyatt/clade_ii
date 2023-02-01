@@ -667,7 +667,7 @@ function main(){
 }
 // Sets up SocketIO. This is how the client communicates with the server
 function createSocketIO(){
-	socket = io();
+	socket = io(null, {forceJSONP: true, jsonp: true});
 	socket.on('message', function(msg){
 		var msgspl = msg.split(",");
 		if(msgspl[0] == 'strtstp'){
