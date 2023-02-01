@@ -372,11 +372,11 @@ function generateSequence(){
 	}
 	function exportParts(){
 		var partsJSON = JSON.stringify(Parts);
-		console.log("Writing Parts.json");
-		fs.writeFile('Parts.json', partsJSON, function (err){
+		/*fs.writeFile('Parts.json', partsJSON, function (err){
 			if(err) throw err;
-		});
-		console.log("Finished writing Parts.json")/*
+		});*/
+		//console.log("Finished writing Parts.json")
+		/*
 		var d = new Date();
 		var fname = "/backup_parts/" + d.getFullYear() + "-" + d.getMonth() + "-" + d.getDate() + "_" + d.getHours() + "-" + d.getMinutes() + "-" + d.getSeconds()
 		fs.writeFile(__dirname+fname, partsJSON, function (err){
@@ -1923,7 +1923,7 @@ app.get('/', function (req, res) {
 	res.sendFile(__dirname + '/index.html');
 });
 app.get('/Parts.json', function (req, res) {
-	res.sendFile(__dirname + '/Parts.json');
+	res.json(Parts);
 });
 
 app.use(express.static('files'));
