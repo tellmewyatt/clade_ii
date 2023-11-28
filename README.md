@@ -7,7 +7,7 @@ The entry point is server.js.
 This piece uses Node.js, Express, and HTML5 
 canvas to create a score which performers read off of in real time. The players go to a website to access the score and the performance is synced between the pages using the timesync and socket.io.
 
-For an explanation of the composition see [index.html](index.html), or go to localhost:3000
+For an explanation of the composition see [index.html](index.html), or go to localhost:3000. Alternatively you can view a [full demo here](https://clade-ii.onrender.com/). Be aware that the program may take a minute to load.
 ## Usage
 
 1. First time, use `npm install` to install the required packagees.
